@@ -5,6 +5,9 @@ import { createMockDesktopApi } from './mock-desktop-api'
 import './styles.css'
 
 if (!window.frameFlow) {
+  if (navigator.userAgent.includes('Electron')) {
+    throw new Error('FrameFlow preload API 未加载，已停止启动以避免误用模拟数据。')
+  }
   window.frameFlow = createMockDesktopApi()
 }
 

@@ -19,7 +19,7 @@ function createWindow(): void {
     backgroundColor: '#0b0e14',
     title: 'FrameFlow',
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
+      preload: join(__dirname, '../preload/index.cjs'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true

@@ -30,6 +30,10 @@
 
 当普通浏览器中不存在 preload API 时，开发入口注入可预测的模拟数据，便于 Playwright 验收视觉、队列和状态流。Electron 正式构建始终使用真实 preload 与主进程服务。
 
+### 沙箱 preload 固定构建为 CommonJS
+
+Electron 的沙箱 preload 使用受限加载环境。项目将 preload 明确输出为 `index.cjs`，Main 进程也只加载该文件；Electron 环境若没有成功暴露 `window.frameFlow`，Renderer 会直接停止并报告错误，不再静默退回浏览器模拟 API。这样文件与文件夹对话框失效时不会被假数据掩盖。
+
 ### 当前环境问题
 
 Electron 33 Windows 运行时约 110 MB，当前网络下载速度异常缓慢。生产构建、真实 FFmpeg 媒体链路和基于 Edge 的界面验收均可继续；原生 Electron 冷启动和安装包测试须在运行时下载完成后补做。
