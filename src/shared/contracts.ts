@@ -54,7 +54,6 @@ export interface DesktopApi {
   getToolchainStatus: () => Promise<ToolchainStatus>
   startConversion: (request: ConversionRequest) => Promise<ConversionResult>
   cancelConversion: (jobId: string) => Promise<boolean>
-  openPath: (path: string) => Promise<string>
   showItemInFolder: (path: string) => Promise<void>
   getPathForFile: (file: File) => string
   onConversionProgress: (listener: (progress: ConversionProgress) => void) => () => void

@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { _electron as electron } from 'playwright'
 
@@ -152,6 +152,34 @@ try {
     }
   }
 
+  const cancellation = await page.evaluate(async ({ inputPath, outputDirectory }) => {
+    const jobId = `cancel-smoke-${Date.now()}`
+    const conversion = window.frameFlow.startConversion({
+      jobId,
+      inputPath,
+      outputDirectory,
+      presetId: 'mp4-h265'
+    })
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    const acknowledged = await window.frameFlow.cancelConversion(jobId)
+    try {
+      await conversion
+      return { acknowledged, outcome: 'completed' }
+    } catch (error) {
+      return {
+        acknowledged,
+        outcome: 'cancelled',
+        message: error instanceof Error ? error.message : String(error)
+      }
+    }
+  }, { inputPath: sourcePath, outputDirectory })
+  if (!cancellation.acknowledged || cancellation.outcome !== 'cancelled' || !cancellation.message?.includes('取消')) {
+    throw new Error(`正式包取消链路异常：${JSON.stringify(cancellation)}`)
+  }
+  if (readdirSync(outputDirectory).some((name) => name.includes('cancel-smoke') && name.includes('.part'))) {
+    throw new Error('取消任务后仍残留临时文件。')
+  }
+
   const finalMetrics = await page.evaluate(() => ({
     viewport: { width: innerWidth, height: innerHeight },
     document: { width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight },
@@ -164,7 +192,7 @@ try {
     throw new Error(`完成态出现非预期页面滚动：${JSON.stringify(finalMetrics)}`)
   }
 
-  console.log(JSON.stringify({ toolchain, initialMetrics, finalMetrics, produced, screenshots: [initialScreenshot, completedScreenshot] }, null, 2))
+  console.log(JSON.stringify({ toolchain, initialMetrics, finalMetrics, produced, cancellation, screenshots: [initialScreenshot, completedScreenshot] }, null, 2))
 } finally {
   await app.close().catch(() => undefined)
 }

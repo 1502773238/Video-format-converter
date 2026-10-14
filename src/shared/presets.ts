@@ -7,6 +7,9 @@ export interface ConversionPreset {
   description: string
   extension: string
   badge: string
+  expectedVideoCodec?: string
+  expectedAudioCodec: string
+  audioOnly?: boolean
   args: readonly string[]
 }
 
@@ -18,6 +21,8 @@ export const conversionPresets: readonly ConversionPreset[] = [
     description: '适合手机、电脑、电视和社交平台',
     extension: 'mp4',
     badge: '推荐',
+    expectedVideoCodec: 'h264',
+    expectedAudioCodec: 'aac',
     args: ['-map', '0:v:0', '-map', '0:a?', '-c:v', 'libx264', '-preset', 'medium', '-crf', '23', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart']
   },
   {
@@ -27,6 +32,8 @@ export const conversionPresets: readonly ConversionPreset[] = [
     description: '使用 H.265，节省空间但兼容性略低',
     extension: 'mp4',
     badge: '省空间',
+    expectedVideoCodec: 'hevc',
+    expectedAudioCodec: 'aac',
     args: ['-map', '0:v:0', '-map', '0:a?', '-c:v', 'libx265', '-preset', 'medium', '-crf', '28', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart']
   },
   {
@@ -36,6 +43,8 @@ export const conversionPresets: readonly ConversionPreset[] = [
     description: 'VP9 + Opus，适合网页和开放格式场景',
     extension: 'webm',
     badge: 'Web',
+    expectedVideoCodec: 'vp9',
+    expectedAudioCodec: 'opus',
     args: ['-map', '0:v:0', '-map', '0:a?', '-c:v', 'libvpx-vp9', '-crf', '32', '-b:v', '0', '-c:a', 'libopus', '-b:a', '128k']
   },
   {
@@ -45,6 +54,8 @@ export const conversionPresets: readonly ConversionPreset[] = [
     description: '从视频中提取高质量 MP3 音频',
     extension: 'mp3',
     badge: '音频',
+    expectedAudioCodec: 'mp3',
+    audioOnly: true,
     args: ['-vn', '-c:a', 'libmp3lame', '-q:a', '2']
   }
 ]

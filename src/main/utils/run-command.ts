@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process'
+import { terminateProcessTree } from './process-tree'
 
 export interface CommandResult {
   exitCode: number
@@ -37,7 +38,7 @@ export function runCommand(
     const collect = (bucket: Buffer[], chunk: Buffer): void => {
       outputBytes += chunk.byteLength
       if (outputBytes > maxOutputBytes) {
-        child.kill()
+        void terminateProcessTree(child)
         finish(() => reject(new Error('外部工具输出过大，进程已终止。')))
         return
       }
@@ -58,7 +59,7 @@ export function runCommand(
     )
 
     const timer = setTimeout(() => {
-      child.kill()
+      void terminateProcessTree(child)
       finish(() => reject(new Error(`外部工具运行超过 ${Math.round(timeoutMs / 1000)} 秒。`)))
     }, timeoutMs)
   })

@@ -8,7 +8,6 @@ const api: DesktopApi = {
   getToolchainStatus: () => ipcRenderer.invoke('toolchain:status'),
   startConversion: (request: ConversionRequest) => ipcRenderer.invoke('conversion:start', request),
   cancelConversion: (jobId) => ipcRenderer.invoke('conversion:cancel', jobId),
-  openPath: (path) => ipcRenderer.invoke('shell:open-path', path),
   showItemInFolder: (path) => ipcRenderer.invoke('shell:show-item', path),
   getPathForFile: (file) => webUtils.getPathForFile(file),
   onConversionProgress: (listener) => {

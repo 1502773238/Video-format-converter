@@ -1,8 +1,8 @@
-import { stat } from 'node:fs/promises'
 import { basename } from 'node:path'
 import type { MediaInfo } from '../shared/contracts'
 import { resolveToolchain } from './toolchain'
 import { runCommand } from './utils/run-command'
+import { validateMediaFile } from './validation'
 
 interface ProbeStream {
   codec_type?: string
@@ -87,15 +87,16 @@ async function createThumbnail(filePath: string, duration: number): Promise<stri
 }
 
 export async function inspectMedia(filePath: string, includeThumbnail = true): Promise<MediaInfo> {
-  const [document, fileStat] = await Promise.all([readProbe(filePath), stat(filePath)])
+  const validated = await validateMediaFile(filePath)
+  const document = await readProbe(validated.path)
   const streams = document.streams ?? []
   const video = streams.find((stream) => stream.codec_type === 'video')
   const audio = streams.find((stream) => stream.codec_type === 'audio')
   const duration = finiteNumber(document.format?.duration) ?? 0
   const info: MediaInfo = {
-    path: filePath,
-    fileName: basename(filePath),
-    size: fileStat.size,
+    path: validated.path,
+    fileName: basename(validated.path),
+    size: validated.size,
     duration,
     format: document.format?.format_long_name ?? document.format?.format_name ?? '未知格式',
     width: video?.width,
@@ -109,7 +110,7 @@ export async function inspectMedia(filePath: string, includeThumbnail = true): P
   }
 
   if (includeThumbnail && video) {
-    info.thumbnailDataUrl = await createThumbnail(filePath, duration)
+    info.thumbnailDataUrl = await createThumbnail(validated.path, duration)
   }
 
   return info

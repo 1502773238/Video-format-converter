@@ -90,7 +90,6 @@ export function createMockDesktopApi(): DesktopApi {
       cancelledJobs.add(jobId)
       return true
     },
-    openPath: async () => '',
     showItemInFolder: async () => undefined,
     getPathForFile: (file) => file.name,
     onConversionProgress: (listener) => {
