@@ -1,8 +1,7 @@
 import { app } from 'electron'
 import { existsSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { join } from 'node:path'
-import ffmpegStatic from 'ffmpeg-static'
-import ffprobeInstaller from '@ffprobe-installer/ffprobe'
 import type { ToolchainStatus } from '../shared/contracts'
 import { runCommand } from './utils/run-command'
 
@@ -19,6 +18,9 @@ export function resolveToolchain(): ToolchainPaths {
     }
   }
 
+  const require = createRequire(import.meta.url)
+  const ffmpegStatic = require('ffmpeg-static') as string | null
+  const ffprobeInstaller = require('@ffprobe-installer/ffprobe') as { path?: string }
   if (!ffmpegStatic || !ffprobeInstaller.path) {
     throw new Error('开发环境中的 FFmpeg 或 ffprobe 路径不可用。')
   }

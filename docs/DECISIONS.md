@@ -34,6 +34,14 @@
 
 Electron 的沙箱 preload 使用受限加载环境。项目将 preload 明确输出为 `index.cjs`，Main 进程也只加载该文件；Electron 环境若没有成功暴露 `window.frameFlow`，Renderer 会直接停止并报告错误，不再静默退回浏览器模拟 API。这样文件与文件夹对话框失效时不会被假数据掩盖。
 
-### 当前环境问题
+### 打包依赖只在开发分支解析
 
-Electron 33 Windows 运行时约 110 MB，当前网络下载速度异常缓慢。生产构建、真实 FFmpeg 媒体链路和基于 Edge 的界面验收均可继续；原生 Electron 冷启动和安装包测试须在运行时下载完成后补做。
+`ffmpeg-static` 和 `@ffprobe-installer/ffprobe` 只用于开发环境及打包前二进制暂存，因此归入 `devDependencies`。正式客户端直接从 `resources/bin` 读取 FFmpeg 与 ffprobe，避免把包管理器目录结构和重复二进制带进成品。
+
+### v0.1.0 采用未签名 Windows 包
+
+首版生成 NSIS 安装版与 portable 便携版。当前未配置商业代码签名证书，因此禁用 electron-builder 的签名和可执行文件资源编辑步骤；这避免把证书和系统级符号链接权限作为 MVP 构建前置条件。代价是使用默认可执行文件图标，并且 Windows 可能显示未知发布者提示。正式对外分发时应补充品牌图标与代码签名。
+
+### 正式包必须做端到端媒体验收
+
+仅在源码环境验证 FFmpeg 不足以证明安装包可用。项目新增 `test:packaged`，直接启动 `release/win-unpacked/FrameFlow.exe`，验证打包内工具路径、视频信息和缩略图、选择文件与输出目录 IPC、打开位置调用，以及 H.264、H.265、VP9、MP3 四种输出的实际编码结果。

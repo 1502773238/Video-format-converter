@@ -15,18 +15,18 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:media": "node scripts/smoke-media.mjs",
+    "test:packaged": "node scripts/acceptance-packaged.mjs",
     "stage:binaries": "node scripts/stage-binaries.mjs",
-    "package:win": "pnpm stage:binaries && pnpm build && electron-builder --win nsis portable --x64"
+    "package:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-win.ps1"
   },
   "dependencies": {
-    "ffmpeg-static": "^5.2.0",
-    "@ffprobe-installer/ffprobe": "^2.1.2",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@ffprobe-installer/ffprobe": "^2.1.2",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "^16.1.0",
     "@types/node": "^22.10.5",
@@ -36,6 +36,7 @@
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
     "electron-vite": "^3.0.0",
+    "ffmpeg-static": "^5.2.0",
     "jsdom": "^25.0.1",
     "playwright": "^1.49.1",
     "typescript": "^5.7.2",
@@ -62,6 +63,7 @@
       }
     ],
     "win": {
+      "signAndEditExecutable": false,
       "target": [
         "nsis",
         "portable"

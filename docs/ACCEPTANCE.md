@@ -55,14 +55,18 @@ pnpm typecheck
 pnpm test
 pnpm build
 pnpm test:media
+pnpm package:win
+pnpm test:packaged
 ```
 
 通过标准：
 
-- 四条命令退出码均为 0。
+- 六条命令退出码均为 0。
 - 单元测试显示全部通过。
 - `out` 目录生成 Main、Preload 和 Renderer 构建结果。
 - 媒体冒烟测试输出 H.264 源文件、JPEG 缩略图和 VP9 WebM，并显示大于 0 的时长。
+- `release` 目录生成安装版、便携版和 `win-unpacked`。
+- 打包验收启动正式版客户端，并验证四种预设的实际编码结果。
 
 ## 5. 人工验收清单
 
@@ -93,4 +97,4 @@ pnpm package:win
 3. 安装、卸载和免安装版启动正常。
 4. Windows 可能对未签名安装包显示信誉提示；正式分发前应配置代码签名。
 
-当前仓库尚未提供已签名的 Release 安装包，源码运行和自动化测试可直接验收。
+本次已生成并自动验收未签名的 v0.1.0 安装版和便携版。自动化验收用可控返回值替代操作系统文件对话框中的人工选择，但完整保留 Renderer → preload → IPC → Main dialog handler 的调用链；安装、卸载和 Windows 信誉提示仍应在目标验收机上人工确认。安装包 SHA-256 见 `outputs/FrameFlow-0.1.0-SHA256.txt`。

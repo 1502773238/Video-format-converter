@@ -2,9 +2,9 @@
 
 FrameFlow 是一款面向普通用户的 Windows 桌面视频格式转换器。它用用途预设代替复杂参数，所有媒体分析、缩略图生成和转码都在本机通过 FFmpeg 完成。
 
-> 当前状态：MVP 开发中。核心媒体链路和浏览器级界面验收已经通过，Windows Electron 冷启动与安装包验收仍在进行。
+> 当前状态：v0.1.0 MVP 已完成。Windows 安装版、免安装版、打包后 Electron 客户端和四种真实转码预设均已通过验收。
 
-![FrameFlow 工作区](outputs/frameflow-workspace.png)
+![FrameFlow 正式版工作区](outputs/FrameFlow-正式版-转换完成.png)
 
 ## 已实现
 
@@ -48,9 +48,11 @@ pnpm typecheck
 pnpm test
 pnpm build
 pnpm test:media
+pnpm package:win
+pnpm test:packaged
 ```
 
-`test:media` 会生成带中文文件名的短视频，依次验证探测、缩略图、WebM 转换和输出校验。
+`test:media` 会生成带中文文件名的短视频，验证探测、缩略图、WebM 转换和输出校验。`test:packaged` 会启动 `release/win-unpacked` 中的正式客户端，验证打包内 FFmpeg、缩略图、文件与文件夹选择 IPC、“打开位置”调用，以及 H.264、H.265、VP9、MP3 四种真实输出。
 
 ## Windows 打包
 
@@ -59,6 +61,13 @@ pnpm package:win
 ```
 
 打包前脚本会把 FFmpeg 和 ffprobe 固定复制到 `resources/bin`，避免包管理器软链接布局影响资源收集。正式发布前还需完成 FFmpeg 构建及编解码器许可证核对。
+
+成功后生成：
+
+- `release/FrameFlow Setup 0.1.0.exe`：可选择安装目录的安装版。
+- `release/FrameFlow 0.1.0.exe`：免安装便携版。
+
+v0.1.0 安装包尚未配置 Windows 代码签名，首次运行时系统可能显示信誉提示。SHA-256 校验值见 `outputs/FrameFlow-0.1.0-SHA256.txt`。
 
 ## 架构与决策
 
@@ -69,4 +78,4 @@ pnpm package:win
 
 ## 许可证
 
-应用源码计划采用 MIT License。FFmpeg、ffprobe 及其编解码器遵循各自许可证，发布包需单独保留第三方许可证说明。
+应用源码采用 MIT License。FFmpeg、ffprobe 及其编解码器遵循各自许可证，分发前请同时阅读 `THIRD_PARTY_NOTICES.md`。
