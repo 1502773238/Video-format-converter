@@ -69,4 +69,3 @@ pnpm package:win
 ## 许可证
 
 应用源码计划采用 MIT License。FFmpeg、ffprobe 及其编解码器遵循各自许可证，发布包需单独保留第三方许可证说明。
-

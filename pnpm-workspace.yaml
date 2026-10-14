@@ -1,0 +1,9 @@
+packages:
+  - .
+
+confirmModulesPurge: false
+
+allowBuilds:
+  electron: true
+  esbuild: true
+  ffmpeg-static: true
