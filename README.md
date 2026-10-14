@@ -64,6 +64,7 @@ pnpm package:win
 
 - [架构说明](docs/ARCHITECTURE.md)
 - [开发决策记录](docs/DECISIONS.md)
+- [使用与验收手册](docs/ACCEPTANCE.md)
 - [方案设计与技术选型](outputs/视频格式转换器方案设计与技术选型.md)
 
 ## 许可证
